@@ -32,7 +32,9 @@ class Scrapper():
       chUrl = chLink['href']
       #name
       chName = chLink.text
-      chName = chName.strip()
+      # chName = chName.strip()
+      
       channels.append({'name': chName,
                        'url': chUrl})
+      
     return channels

@@ -42,7 +42,8 @@ def get_params():
   return param
 
 def addDir(name, cat_id, url, mode):
-  name = name.encode('utf8')
+  name = name.encode('utf-8')
+  
   contextMenuItems = []
 
   plugin=sys.argv[0]
@@ -79,10 +80,6 @@ def addLink(name, url, id=None):
   u = sys.argv[0] + "?mode=2&url=%s&name=%s" % (urllib.quote_plus(url), urllib.quote_plus(name))
   
   # liz.addContextMenuItems(contextMenuItems)
-  addon_log(name)
-  addon_log(u)
-  addon_log(sys.argv[1])
-
   return xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=False)
   
 
