@@ -1,6 +1,3 @@
-plugin.video.streams
+plugin.video.acestreamsearch
 ====================
 
-streams plugin for kodi
-
-https://github.com/moromete/plugin.video.streams/wiki

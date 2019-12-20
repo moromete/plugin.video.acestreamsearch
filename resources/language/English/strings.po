@@ -238,14 +238,10 @@ msgid "My channels"
 msgstr ""
 
 msgctxt "#30402"
-msgid "Add new channel"
+msgid "Search"
 msgstr ""
 
 msgctxt "#30403"
-msgid "Stream url"
-msgstr ""
-
-msgctxt "#30404"
 msgid "Stream name"
 msgstr ""
 
