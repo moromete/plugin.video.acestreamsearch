@@ -156,7 +156,7 @@ msgid "Refresh All Schedules"
 msgstr ""
 
 msgctxt "#30052"
-msgid "Refresh Channel List"
+msgid "Add to main list"
 msgstr ""
 
 msgctxt "#30053"

@@ -8,7 +8,7 @@ def addon_log(string):
   if DEBUG == 'true':
     if isinstance(string, unicode):
       string = string.encode('utf-8')
-    xbmc.log("[plugin.video.streams-%s]: %s" %(ADDON_VERSION, string))
+    xbmc.log("[plugin.video.acestreamsearch-%s]: %s" %(ADDON_VERSION, string))
 
 from contextlib import contextmanager
 @contextmanager

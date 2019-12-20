@@ -22,9 +22,6 @@ addon_id = 'plugin.video.acestreamsearch'
 settings = xbmcaddon.Addon(id=addon_id)
 fileslist = xbmc.translatePath(settings.getAddonInfo('profile')).decode('utf-8')
 
-
-
-
 def get_params():
   param=[]
 
@@ -64,13 +61,14 @@ def addDir(name, cat_id, url, mode):
   ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=True)
   return ok
 
-def addLink(name, url):
+def addLink(name, url, id=None):
   name = name.encode('utf8')
   
-  # contextMenuItems = []
+  contextMenuItems = []
 
-  # u=sys.argv[0]+"?mode=4"
-  # contextMenuItems.append(( addon.getLocalizedString(30052), "XBMC.RunPlugin("+u+")", )) #Refresh Channel List
+  if(id == None):
+    u=sys.argv[0]+"?mode=4"
+    contextMenuItems.append(( addon.getLocalizedString(30052), "XBMC.RunPlugin("+u+")", )) #Add to main list
   
   # u=sys.argv[0]+"?mode=7&ch_id=" + str(ch_id)
   # contextMenuItems.append(( addon.getLocalizedString(30407), "XBMC.RunPlugin("+u+")", )) #Delete Channel
@@ -165,6 +163,8 @@ elif mode==2:  #play stream
   if xbmc.Player().isPlaying():
     xbmc.Player().stop()
   STREAM(name=params["name"], url=urllib.unquote_plus(params["url"]), ch_id=None)
+elif mode==3:  #add to main list
+  pass
 elif (mode==7): #delete stream
   channels = Channels() 
   channels.deleteStream(ch_id)
