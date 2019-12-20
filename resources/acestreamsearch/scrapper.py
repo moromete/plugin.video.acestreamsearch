@@ -20,20 +20,22 @@ class Scrapper():
     request = urllib2.Request(url, None, self.headers)
     response = self.opener.open(request)
     html = response.read()
+    # addon_log(html)
     
     soup = BeautifulSoup(html, "html.parser")
     items = soup.find_all('li', class_="list-group-item")
-
+    
     channels = []
     for item in items:
-      soup = BeautifulSoup(str(item.contents), "html.parser")
+      listItem = item.contents[0].encode('utf-8')  
+      soup = BeautifulSoup(listItem, "html.parser")
       #url
       chLink = soup.find('a', href=True)
       chUrl = chLink['href']
       #name
       chName = chLink.text
       # chName = chName.strip()
-      
+      # addon_log(chName)
       channels.append({'name': chName,
                        'url': chUrl})
       
