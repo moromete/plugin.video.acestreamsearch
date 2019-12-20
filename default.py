@@ -35,7 +35,7 @@ def get_params():
   return param
 
 def addLink(name, url, id=None):
-  # name = name.encode('utf8')
+  name = name.encode('utf8')
   contextMenuItems = []
 
   if(id == None):
