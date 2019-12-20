@@ -1,8 +1,6 @@
 import xbmc, xbmcgui
 
-#import glob
 from common import addon_log, addon
-#from default import DISABLE_SCHEDULE, load_active_event
 
 from settings import SETTINGS
 from resources.acestreamsearch.channels import Channels
@@ -44,8 +42,6 @@ class streamplayer(xbmc.Player):
   def onPlayBackStopped(self):
     addon_log('----------------------->STOP PLAY')
     self.player_status = 'stop'
-    
-    # addon_log(self.callback)
     try:
       if(self.callback != None):
         self.callback()

@@ -19,26 +19,6 @@ msgctxt "#30000"
 msgid "General"
 msgstr ""
 
-msgctxt "#30001"
-msgid "Engines"
-msgstr ""
-
-msgctxt "#30002"
-msgid "Schedule"
-msgstr ""
-
-msgctxt "#30003"
-msgid "Channel List"
-msgstr ""
-
-msgctxt "#30004"
-msgid "Channel Countries"
-msgstr ""
-
-msgctxt "#30005"
-msgid "Channel Language"
-msgstr ""
-
 #empty strings from id 30006 to 30009
 
 msgctxt "#30010"
@@ -50,47 +30,7 @@ msgid "Wait time before atempting to start the player [ms]"
 msgstr ""
 
 msgctxt "#30012"
-msgid "Local port (where others can connect)"
-msgstr ""
-
-msgctxt "#30013"
-msgid "Video port"
-msgstr ""
-
-msgctxt "#30014"
-msgid "Buffer Size"
-msgstr ""
-
-msgctxt "#30015"
-msgid "Disable program guides"
-msgstr ""
-
-msgctxt "#30016"
-msgid "Remote channel list URL"
-msgstr ""
-
-msgctxt "#30017"
-msgid "Channel list expire [hours] (0 = no update)"
-msgstr ""
-
-msgctxt "#30018"
-msgid "Show offline channels"
-msgstr ""
-
-msgctxt "#30019"
-msgid "Load program guide when displaying channel list"
-msgstr ""
-
-msgctxt "#30020"
-msgid "Sopcast path for ARM system (Raspberry Pi)"
-msgstr ""
-
-msgctxt "#30021"
-msgid "unclassified"
-msgstr ""
-
-msgctxt "#30022"
-msgid "Sopcast"
+msgid "Enable search"
 msgstr ""
 
 msgctxt "#30023"
@@ -105,10 +45,6 @@ msgctxt "#30025"
 msgid "Engine TCP port"
 msgstr ""
 
-msgctxt "#30026"
-msgid "Show unverified"
-msgstr ""
-
 msgctxt "#30027"
 msgid "use Plexus"
 msgstr ""
@@ -121,98 +57,22 @@ msgctxt "#30029"
 msgid "Acestream engine"
 msgstr ""
 
-msgctxt "#30030"
-msgid "internal"
-msgstr ""
-
-msgctxt "#30031"
-msgid "EPG url"
-msgstr ""
-
-msgctxt "#30032"
-msgid "SMTP"
-msgstr ""
-
-msgctxt "#30033"
-msgid "SMTP Username"
-msgstr ""
-
-msgctxt "#30034"
-msgid "SMTP Password"
-msgstr ""
-
-msgctxt "#30035"
-msgid "SMTP Port"
-msgstr ""
-
 #empty strings from id 30036 to 30049
 
-msgctxt "#30050"
-msgid "Refresh Schedule"
-msgstr ""
-
-msgctxt "#30051"
-msgid "Refresh All Schedules"
-msgstr ""
-
 msgctxt "#30052"
-msgid "Add to main list"
-msgstr ""
-
-msgctxt "#30053"
-msgid "Downloading Channel list"
-msgstr ""
-
-msgctxt "#30054"
-msgid "Channel list"
-msgstr ""
-
-msgctxt "#30055"
-msgid "Downloading Channel Logo"
-msgstr ""
-
-msgctxt "#30056"
-msgid "Program guide is up to date"
+msgid "Add to my channels"
 msgstr ""
 
 msgctxt "#30057"
 msgid "Channel is offline"
 msgstr ""
 
-msgctxt "#30058"
-msgid "Network is offline"
-msgstr ""
-
-msgctxt "#30059"
-msgid "Channel initialization failed"
-msgstr ""
-
-msgctxt "#30060"
-msgid "Sream"
-msgstr ""
-
-msgctxt "#30061"
-msgid "Downloading Program Guide"
-msgstr ""
-
-msgctxt "#30062"
-msgid "Program guide"
-msgstr ""
-
 msgctxt "#30063"
 msgid "Offline"
 msgstr ""
 
-msgctxt "#30064"
-msgid "Program guide is not available"
-msgstr ""
-
 msgctxt "#30065"
 msgid "Get stream URL"
-msgstr ""
-
-msgctxt "#30066"
-msgid "unverified"
 msgstr ""
 
 #empty strings from id 30067 to 30299
@@ -221,36 +81,16 @@ msgctxt "#30300"
 msgid "Error"
 msgstr ""
 
-msgctxt "#30301"
-msgid "Cannot parse channel list !"
-msgstr ""
-
-msgctxt "#30302"
-msgid "Please install python module \"pytz\" or disable program guides from addon settings"
-msgstr ""
-
 msgctxt "#30303"
 msgid "Plexus addon not installed!"
-msgstr ""
-
-msgctxt "#30401"
-msgid "My channels"
 msgstr ""
 
 msgctxt "#30402"
 msgid "Search"
 msgstr ""
 
-msgctxt "#30403"
-msgid "Stream name"
-msgstr ""
-
 msgctxt "#30405"
 msgid "Successfully added!"
-msgstr ""
-
-msgctxt "#30406"
-msgid "Invalid protocol!"
 msgstr ""
 
 msgctxt "#30407"
@@ -258,10 +98,21 @@ msgid "Delete channel"
 msgstr ""
 
 msgctxt "#30408"
-msgid "Error adding channel"
+msgid "Update channel address"
 msgstr ""
 
 msgctxt "#30409"
-msgid "Error sending channels to comunity please set a valid mail server in addon settings -> Channel List -> SMTP !"
+msgid "Channel address updated"
 msgstr ""
 
+msgctxt "#30410"
+msgid "Are you sure you want to delete this channel?"
+msgstr ""
+
+msgctxt "#30411"
+msgid "Update all channels addresses"
+msgstr ""
+
+msgctxt "#30412"
+msgid "Updating channels addresses..."
+msgstr ""
