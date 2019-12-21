@@ -137,10 +137,12 @@ elif (mode==5): #update stream
   channels = Channels() 
   if(channels.updateStream(params["id"])):
     xbmc.executebuiltin("Notification(%s,%s,%i)" % (addon.getLocalizedString(30409), "", 1))
+  xbmc.executebuiltin("Container.Refresh")
 elif (mode==6): #update all streams
   channels = Channels() 
   if(channels.updateAllStreams()):
     xbmc.executebuiltin("Notification(%s,%s,%i)" % (addon.getLocalizedString(30409), "", 1))
+  xbmc.executebuiltin("Container.Refresh")
   
 addon_log('------------- END ---------------')
 xbmcplugin.endOfDirectory(int(sys.argv[1]))

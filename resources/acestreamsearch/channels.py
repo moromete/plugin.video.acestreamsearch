@@ -109,13 +109,13 @@ class Channels():
     ch = Channel()
     ch.findOne(id)
 
-    addon_log(ch.name)
-
     scrapper = Scrapper()
     arrChannels = scrapper.execute(name=ch.name)
 
     if(arrChannels):
-      return ch.update(address = arrChannels[0]['url'])
+      for chFound in arrChannels:
+        if(ch.name == chFound['name']):
+          return ch.update(address = chFound['url'])
 
   def updateAllStreams(self):
     pDialog = xbmcgui.DialogProgress()
