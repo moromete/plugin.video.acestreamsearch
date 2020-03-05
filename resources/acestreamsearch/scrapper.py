@@ -1,4 +1,4 @@
-import urllib2
+import urllib, urllib2
 from bs4 import BeautifulSoup
 
 from common import addon_log
@@ -15,7 +15,7 @@ class Scrapper():
   }
 
   def execute(self, name):
-    url = self.url + "?q=" + name
+    url = self.url + "?q=" + urllib.quote_plus(name)
     self.opener = urllib2.build_opener()
     request = urllib2.Request(url, None, self.headers)
     response = self.opener.open(request)
@@ -28,13 +28,13 @@ class Scrapper():
     channels = []
     for item in items:
       listItem = item.contents[0].encode('utf-8')  
+      addon_log(listItem)
       soup = BeautifulSoup(listItem, "html.parser")
       #url
       chLink = soup.find('a', href=True)
       chUrl = chLink['href']
       #name
-      chName = chLink.text
-      # chName = chName.strip()
+      chName = chLink.contents[0].string
       # addon_log(chName)
       channels.append({'name': chName,
                        'url': chUrl})

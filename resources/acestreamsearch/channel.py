@@ -29,16 +29,27 @@ class Channel():
       self.address     = rec[1]
       self.status      = rec[2]
       return True
-  
+
   def save(self):
     if(self.id):
       return self.update()
     else:
       if(self.checkAddrExist() == False):
-        self.id  = str(uuid.uuid1())
         return self.insert()
       else:
         return False
+
+  def checkNameExist(self):
+    sql = "SELECT id \
+           FROM channels \
+           where name = ?"
+    self.db_cursor.execute( sql, (self.name, ) ) 
+    rec=self.db_cursor.fetchone()
+    if(rec != None):
+      self.id = rec[0]
+      return True
+    else:
+      return False
 
   def checkAddrExist(self):
     sql = "SELECT id \
@@ -53,6 +64,7 @@ class Channel():
       return False
     
   def insert(self):
+    self.id  = str(uuid.uuid1())
     sql = "INSERT INTO channels \
            (id, name, address, status) \
            VALUES(?, ?, ?, ?)"

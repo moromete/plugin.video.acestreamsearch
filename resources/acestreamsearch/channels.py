@@ -1,9 +1,7 @@
 import xbmc, xbmcgui
 
 import sys
-import re
 import sqlite3
-import json
 import os
 
 from settings import SETTINGS
@@ -12,32 +10,8 @@ from channel import Channel
 from scrapper import Scrapper
 
 class Channels():
-  def __init__( self , **kwargs):
-    self.catId = kwargs.get('catId')
-
-  # def createDb(self):
-  #   db_connection=sqlite3.connect(SETTINGS.CHANNELS_DB)
-  #   db_cursor=db_connection.cursor()
-
-  #   sql = "CREATE TABLE IF NOT EXISTS categories (id INTEGER, name TEXT)"
-  #   addon_log(sql)
-  #   db_cursor.execute(sql);
-    
-  #   sql="DELETE FROM categories"
-  #   db_cursor.execute(sql)
-
-  #   #video_resolution TEXT, video_aspect REAL, audio_codec TEXT, video_codec TEXT, thumbnail TEXT, schedule_id INTEGER,\
-  #   sql = "CREATE TABLE IF NOT EXISTS channels \
-  #         (id TEXT, id_cat INTEGER, name TEXT, language TEXT, status INTEGER, \
-  #          address TEXT, protocol TEXT, \
-  #          unverified INTEGER, my integer, deleted integer)"
-  #   db_cursor.execute(sql)
-    
-  #   # sql="DELETE FROM channels"
-  #   # db_cursor.execute(sql)
-    
-  #   db_connection.commit()
-  #   db_connection.close()
+  # def __init__( self , **kwargs):
+  #   pass
 
   def migrateDb(self):
     addon_log("""Run database migrations.""")
@@ -81,182 +55,79 @@ class Channels():
       else:
         scrapper = Scrapper()
         return scrapper.execute(name=name)
-        #save
-        # ch = Channel(address = url, name=name, status=Channel.STATUS_ONLINE)
-        # if(ch.save() == False):
-        #   xbmc.executebuiltin("Notification(%s,%s,%i)" % (addon.getLocalizedString(30408), "", 1))
-        #   xbmc.executebuiltin("Container.Refresh")
-        # xbmc.executebuiltin("Notification(%s,%s,%i)" % (addon.getLocalizedString(30405), "", 1))
-        # xbmc.executebuiltin("Container.Refresh")
-    else:
-      xbmc.executebuiltin("Container.Refresh")
   
+  def add(self, name, url):
+    ch = Channel(name = name,
+                 address = url)
+    if(ch.checkAddrExist()):
+      return ch.update(name = name)
+    else: 
+      if(ch.checkNameExist()):
+        return ch.update(address = url)
+      else :
+        return ch.insert()
+          
   def deleteStream(self, chId):
-    ch = Channel()
-    ch.findOne(chId)
-    ch.delete()
-    xbmc.executebuiltin("Container.Refresh")
+    dialog = xbmcgui.Dialog()
+    ret = dialog.yesno('', addon.getLocalizedString(30410))
 
-  def cleanCategories(self):
-    db = sqlite3.connect(SETTINGS.CHANNELS_DB)
-    db_cursor=db.cursor()
+    if(ret):
+      ch = Channel()
+      ch.findOne(chId)
+      ch.delete()
+      xbmc.executebuiltin("Container.Refresh")
 
-    sql="DELETE FROM categories"
-    db_cursor.execute(sql)
-
-    db.commit()
-    db.close()
-  
-  def importChannels(self):
-    # self.createDb()
-    # self.migrateDb()
-    
-    with open(SETTINGS.CHAN_LIST) as json_file:
-      data = json.loads(json_file.read())
-      json_file.close()
-
-      self.cleanCategories()
-
-      parsedIds = []
-
-      for group in data['groups']:
-        addon_log(str(group['id']) + " " + group['name'])
-        cat = Category(id = group['id'], name=group['name'])
-        cat.insert()
-        
-        for channel in group['channels']:
-          #addon_log(str(channel['id'])+" "+unicode(channel['name'])+" "+ str(channel['language'])+" "+str(channel['status']))
-          if ((not channel['unverified']) or (SETTINGS.SHOW_UNVERIFIED=='true')):
-
-            #addon_log(channel['name'].encode('utf8'))
-
-            # schedule_id = 0
-            # thumbnail = ""
-            # video_resolution = ""
-            # video_aspect = 0
-            # audio_codec = ""
-            # video_codec = ""
-
-            # stream_type = channel['stream_type']
-            # if 'schedule' in channel:
-            #   schedule = channel['schedule']
-            #   schedule_id = schedule['ch_id']
-            # if 'thumbnail' in channel:
-            #   thumbnail = channel['thumbnail']
-            # if 'video_resolution' in stream_type:
-            #   video_resolution = stream_type['video_resolution']
-            # if 'video_aspect' in stream_type:
-            #   video_aspect = stream_type['video_aspect']
-            # if 'audio_codec' in stream_type:
-            #   audio_codec = stream_type['audio_codec']
-            # if 'video_codec' in stream_type:
-            #   video_codec = stream_type['video_codec']
-            if(channel['status'] == 2): 
-              status = Channel.STATUS_ONLINE 
-            else: 
-              status = Channel.STATUS_OFFLINE
-
-            ch = Channel(id = str(channel['id']),
-                         id_cat = group['id'],
-                         name = channel['name'],
-                         address = channel['address'], 
-                         protocol = channel['protocol'],
-                         language = channel['language'],
-                         status = status,
-                         unverified = channel['unverified']
-                        )
-            if((ch.checkExist() == False) and (ch.checkAddrExist() == False)):
-              ch.insert()
-            else:
-              if(ch.checkIsMy() == False):
-                ch.update(id_cat = group['id'],
-                          name = channel['name'],
-                          address = channel['address'], 
-                          protocol = channel['protocol'],
-                          language = channel['language'],
-                          status = status,
-                          unverified = channel['unverified'])
-            
-            if(ch.checkIsMy() == False):
-              parsedIds.append(ch.id)
-      
-      addon_log('parsed %d channels' % len(parsedIds))
-      self.cleanChannels(parsedIds)
-  
-  #delete channels that are not comming from import and are not my channels
-  def cleanChannels(self, parsedIds):
-    if(len(parsedIds) > 0):
-      db = sqlite3.connect(SETTINGS.CHANNELS_DB)
-      db_cursor=db.cursor()
-      # addon_log(parsedIds)
-
-      #do not delete my channels 
-      sql="DELETE FROM channels WHERE id NOT IN ( %s ) AND my IS NULL" % ", ".join(parsedIds)
-      # addon_log(sql)
-      db_cursor.execute(sql)
-
-      db.commit()
-      db.close()
-
-  def loadChannels(self, loadUnverified = False):
+  def loadChannels(self):
     db_connection=sqlite3.connect(SETTINGS.CHANNELS_DB)
     db_cursor=db_connection.cursor()
 
-    sql = 'SELECT id, name, language, status, \
-           address, protocol, \
-           unverified, my \
+    sql = 'SELECT id, name, status, address \
            FROM channels \
-           WHERE id_cat = ? and deleted is NULL'
-    if(loadUnverified):
-      sql += ' and unverified = 1'
-    else:
-      sql += ' and unverified IS NULL'
-    sql += ' ORDER BY name'
+           ORDER BY name'
     
-    db_cursor.execute( sql, (self.catId, ) )
+    db_cursor.execute( sql )
     rec=db_cursor.fetchall()
     
     arrChannels = []
     if len(rec)>0:
-      for id, name, language, status, \
-          address, protocol, \
-          unverified, my in rec:
+      for id, name, status, address in rec:
         ch = Channel(id=id, 
-                     id_cat=self.catId,
                      name=name,
-                     language=language,
                      status=status,
-                     address=address,
-                     protocol=protocol,
-                     unverified=unverified,
-                     my=my)
+                     address=address)
         arrChannels.append(ch)
     db_connection.close()
     return arrChannels
 
-  def loadCategories(self):
-    db_connection=sqlite3.connect(SETTINGS.CHANNELS_DB)
-    db_cursor=db_connection.cursor()
-      
-    sql = "SELECT id, name \
-           FROM categories"
-    db_cursor.execute(sql)
-    rec=db_cursor.fetchall()
-    
-    arrCategories = []
-    if len(rec)>0:
-      for id, name in rec:
-        cat = Category(id=id, 
-                       name=name)
-        arrCategories.append(cat)
-    db_connection.close()
-    return arrCategories
-  
   def markStream(self, chId, status):
     ch = Channel()
     ch.findOne(chId)
     ch.setStatus(status)
     # xbmc.executebuiltin("Container.Refresh")
 
+  def updateStream(self, id):
+    ch = Channel()
+    ch.findOne(id)
+
+    scrapper = Scrapper()
+    arrChannels = scrapper.execute(name=ch.name)
+
+    if(arrChannels):
+      for chFound in arrChannels:
+        if(ch.name == chFound['name']):
+          return ch.update(address = chFound['url'])
+
+  def updateAllStreams(self):
+    pDialog = xbmcgui.DialogProgress()
+    pDialog.create(addon.getLocalizedString(30412))
+
+    arrChannels = self.loadChannels()
+    
+    i=1
+    for ch in arrChannels:
+      self.updateStream(id = ch.id)
+      percent = i * 100 / len(arrChannels)
+      pDialog.update(percent, ch.name)
+      i = i + 1
 
     
