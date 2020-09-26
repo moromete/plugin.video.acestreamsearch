@@ -1,8 +1,6 @@
 import urllib, urllib2
 from bs4 import BeautifulSoup
 
-from common import addon_log
-
 class Scrapper():
   url = 'https://acestreamsearch.net/en/'
   headers = {
@@ -20,7 +18,7 @@ class Scrapper():
     request = urllib2.Request(url, None, self.headers)
     response = self.opener.open(request)
     html = response.read()
-    # addon_log(html)
+    #print(html)
     
     soup = BeautifulSoup(html, "html.parser")
     items = soup.find_all('li', class_="list-group-item")
@@ -28,15 +26,16 @@ class Scrapper():
     channels = []
     for item in items:
       listItem = item.contents[0].encode('utf-8')  
-      addon_log(listItem)
+      #print(listItem)
       soup = BeautifulSoup(listItem, "html.parser")
       #url
       chLink = soup.find('a', href=True)
       chUrl = chLink['href']
       #name
       chName = chLink.contents[0].string
-      # addon_log(chName)
-      channels.append({'name': chName,
-                       'url': chUrl})
+      #print(chName)
+      if(chUrl and chName):
+        channels.append({'name': chName,
+                         'url': chUrl})
       
     return channels

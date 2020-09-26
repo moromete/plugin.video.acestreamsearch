@@ -35,27 +35,28 @@ def get_params():
   return param
 
 def addLink(name, url, id=None):
-  name = name.encode('utf8')
-  contextMenuItems = []
+  if(name != None):
+    name = name.encode('utf8')
+    contextMenuItems = []
 
-  if(id == None):
-    u=sys.argv[0]+"?mode=3&url=%s&name=%s" % (urllib.quote_plus(url), urllib.quote_plus(name))
-    contextMenuItems.append(( addon.getLocalizedString(30052), "XBMC.RunPlugin("+u+")", )) #Add to main list
-  else:
-    u=sys.argv[0]+"?mode=5&id=" + str(id)
-    contextMenuItems.append(( addon.getLocalizedString(30408), "XBMC.RunPlugin("+u+")", )) #Update Channel
-    u=sys.argv[0]+"?mode=6"
-    contextMenuItems.append(( addon.getLocalizedString(30411), "XBMC.RunPlugin("+u+")", )) #Update all channels
-    u=sys.argv[0]+"?mode=4&id=" + str(id)
-    contextMenuItems.append(( addon.getLocalizedString(30407), "XBMC.RunPlugin("+u+")", )) #Delete Channel
+    if(id == None):
+      u=sys.argv[0]+"?mode=3&url=%s&name=%s" % (urllib.quote_plus(url), urllib.quote_plus(name))
+      contextMenuItems.append(( addon.getLocalizedString(30052), "XBMC.RunPlugin("+u+")", )) #Add to main list
+    else:
+      u=sys.argv[0]+"?mode=5&id=" + str(id)
+      contextMenuItems.append(( addon.getLocalizedString(30408), "XBMC.RunPlugin("+u+")", )) #Update Channel
+      u=sys.argv[0]+"?mode=6"
+      contextMenuItems.append(( addon.getLocalizedString(30411), "XBMC.RunPlugin("+u+")", )) #Update all channels
+      u=sys.argv[0]+"?mode=4&id=" + str(id)
+      contextMenuItems.append(( addon.getLocalizedString(30407), "XBMC.RunPlugin("+u+")", )) #Delete Channel
 
-  liz = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=None)
-  liz.setInfo( type="Video", infoLabels={ "Title": name, "Plot": ''} )
+    liz = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=None)
+    liz.setInfo( type="Video", infoLabels={ "Title": name, "Plot": ''} )
 
-  u = sys.argv[0] + "?mode=2&url=%s&name=%s" % (urllib.quote_plus(url), urllib.quote_plus(name))
-  
-  liz.addContextMenuItems(contextMenuItems)
-  return xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=False)
+    u = sys.argv[0] + "?mode=2&url=%s&name=%s" % (urllib.quote_plus(url), urllib.quote_plus(name))
+    
+    liz.addContextMenuItems(contextMenuItems)
+    return xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=False)
   
 
 def CHANNEL_LIST():
@@ -76,7 +77,7 @@ def CHANNEL_LIST():
     addLink(id = ch.id, name = ch.name, url = ch.address)
 
 def LIST_SEARCH(arrChannels):
-  # addon_log(arrChannels)
+  addon_log(arrChannels)
   if(arrChannels):
     for ch in arrChannels:
       addLink(name = ch['name'], url=ch['url'])
