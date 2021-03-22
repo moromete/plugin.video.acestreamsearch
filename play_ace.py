@@ -8,6 +8,7 @@ import json
 import urllib2
 import urllib
 import time
+# import select
 
 import glob
 from common import addon_log, addon, busy_dialog
@@ -18,7 +19,7 @@ from resources.acestreamsearch.channel import Channel
 class acestream():
   buffer_size = 1024
   start_time = None
-  timeout = 30
+  timeout = 10
 
   def __init__( self , *args, **kwargs):
     self.player=kwargs.get('player')
@@ -36,8 +37,25 @@ class acestream():
     buffer = ''
     data = True
     while data:
-      data = sock.recv(recv_buffer)
 
+      # ready = select.select([sock], [], [], self.timeout)
+      # if ready[0]:
+      #   data = sock.recv(recv_buffer)
+      # else:
+      #   addon_log('timeout')
+      #   self.send("STOP")
+      #   self.send("SHUTDOWN")
+      #   # self.shutdown()
+      #   # self.sock.close()
+      #   xbmc.executebuiltin("Notification(%s,%s,%i)" % (addon.getLocalizedString(30057), "", 10000))
+      #   return
+      try: 
+        data = sock.recv(recv_buffer)
+      except Exception as inst:
+        addon_log(inst)
+        xbmc.executebuiltin("Notification(%s,%s,%i)" % (addon.getLocalizedString(30057), "", 10000))
+        return
+            
       buffer += data
 
       while buffer.find(delim) != -1:
@@ -50,13 +68,16 @@ class acestream():
       try:
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.connect((SETTINGS.ACE_HOST, SETTINGS.ACE_PORT))
+        self.sock.settimeout(self.timeout)
       except Exception as inst:
         addon_log(inst)
         DEBUG = addon.getSetting('debug')
         if DEBUG == 'true': xbmc.executebuiltin("Notification(%s,%s,%i)" % (str(type(inst)), str(inst), 5))
         return False
 
-      self.send("HELLOBG version=3")
+      cmd = "HELLOBG version=3"
+      addon_log(cmd)
+      self.send(cmd)
       player_url = self.ace_read()
 
     if(player_url != None):
@@ -74,7 +95,9 @@ class acestream():
     signature = hashlib.sha1(REQUEST_KEY + SETTINGS.PRODUCT_KEY).hexdigest()
     response_key = SETTINGS.PRODUCT_KEY.split ("-") [0] + "-" + signature
 
-    self.send("READY key="+response_key)
+    cmd = "READY key="+response_key
+    addon_log(cmd)
+    self.send(cmd)
 
   def ch_open(self):
     request_id = random.randint(1, 100)
@@ -100,9 +123,9 @@ class acestream():
   def ace_read(self):
     for line in self.read_lines(self.sock):
 
-      if ((self.start_time!=None) and ((time.time() - self.start_time) > self.timeout)):
-        self.shutdown()
-        xbmc.executebuiltin("Notification(%s,%s,%i)" % (addon.getLocalizedString(30057), "", 10000))
+      # if ((self.start_time!=None) and ((time.time() - self.start_time) > self.timeout)):
+      #   self.shutdown()
+      #   xbmc.executebuiltin("Notification(%s,%s,%i)" % (addon.getLocalizedString(30057), "", 10000))
 
       addon_log(line)
       if line.startswith("HELLOTS"):
