@@ -6,8 +6,8 @@ def addon_log(string):
   DEBUG = addon.getSetting('debug')
   ADDON_VERSION = addon.getAddonInfo('version')
   if DEBUG == 'true':
-    if isinstance(string, unicode):
-      string = string.encode('utf-8')
+    # if isinstance(string, unicode):
+    #   string = string.encode('utf-8')
     xbmc.log("[plugin.video.acestreamsearch-%s]: %s" %(ADDON_VERSION, string))
 
 from contextlib import contextmanager

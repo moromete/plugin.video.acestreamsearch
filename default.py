@@ -1,6 +1,6 @@
 import xbmc, xbmcgui, xbmcplugin, xbmcaddon
 import sys, os, os.path
-import urllib
+import urllib.parse
 
 from settings import SETTINGS
 from common import addon_log, addon
@@ -13,7 +13,7 @@ from resources.acestreamsearch.channel import Channel
 
 addon_id = 'plugin.video.acestreamsearch'
 settings = xbmcaddon.Addon(id=addon_id)
-fileslist = xbmc.translatePath(settings.getAddonInfo('profile')).decode('utf-8')
+fileslist = xbmc.translatePath(settings.getAddonInfo('profile'))
 
 def get_params():
   param=[]
@@ -40,20 +40,22 @@ def addLink(name, url, id=None):
     contextMenuItems = []
 
     if(id == None):
-      u=sys.argv[0]+"?mode=3&url=%s&name=%s" % (urllib.quote_plus(url), urllib.quote_plus(name))
-      contextMenuItems.append(( addon.getLocalizedString(30052), "XBMC.RunPlugin("+u+")", )) #Add to main list
+      u=sys.argv[0]+"?mode=3&url=%s&name=%s" % (urllib.parse.quote_plus(url), urllib.parse.quote_plus(name))
+      addon_log(u)
+      contextMenuItems.append(( addon.getLocalizedString(30052), "RunPlugin("+u+")", )) #Add to main list
     else:
       u=sys.argv[0]+"?mode=5&id=" + str(id)
-      contextMenuItems.append(( addon.getLocalizedString(30408), "XBMC.RunPlugin("+u+")", )) #Update Channel
+      contextMenuItems.append(( addon.getLocalizedString(30408), "RunPlugin("+u+")", )) #Update Channel
       u=sys.argv[0]+"?mode=6"
-      contextMenuItems.append(( addon.getLocalizedString(30411), "XBMC.RunPlugin("+u+")", )) #Update all channels
+      contextMenuItems.append(( addon.getLocalizedString(30411), "RunPlugin("+u+")", )) #Update all channels
       u=sys.argv[0]+"?mode=4&id=" + str(id)
-      contextMenuItems.append(( addon.getLocalizedString(30407), "XBMC.RunPlugin("+u+")", )) #Delete Channel
+      contextMenuItems.append(( addon.getLocalizedString(30407), "RunPlugin("+u+")", )) #Delete Channel
 
-    liz = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=None)
+    liz = xbmcgui.ListItem(name)
+    liz.setArt({'icon': "DefaultVideo.png"})
     liz.setInfo( type="Video", infoLabels={ "Title": name, "Plot": ''} )
 
-    u = sys.argv[0] + "?mode=2&url=%s&name=%s" % (urllib.quote_plus(url), urllib.quote_plus(name))
+    u = sys.argv[0] + "?mode=2&url=%s&name=%s" % (urllib.parse.quote_plus(url), urllib.parse.quote_plus(name))
     
     liz.addContextMenuItems(contextMenuItems)
     return xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=False)
@@ -62,7 +64,8 @@ def addLink(name, url, id=None):
 def CHANNEL_LIST():
   #add search link
   if(addon.getSetting('search') == 'true'):
-    liz=xbmcgui.ListItem('[B][COLOR green]'+addon.getLocalizedString(30402)+'[/COLOR][/B]', iconImage="DefaultFolder.png", thumbnailImage=None)
+    liz=xbmcgui.ListItem('[B][COLOR green]'+addon.getLocalizedString(30402)+'[/COLOR][/B]')
+    liz.setArt({'icon': "DefaultFolder.png"})
     liz.setInfo( type="Video", infoLabels={ "Title": None } )
     liz.setProperty('IsPlayable', 'false')
     url = sys.argv[0] + "?mode=1"
@@ -83,7 +86,9 @@ def LIST_SEARCH(arrChannels):
       addLink(name = ch['name'], url=ch['url'])
 
 def STREAM(name, url, ch_id):
-  listitem = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage="DefaultVideo.png")
+  listitem = xbmcgui.ListItem(name)
+  listitem.setArt({'icon': "DefaultVideo.png", 
+                   'thumb': "DefaultVideo.png"})
   listitem.setInfo('video', {'Title': name})
 
   player = streamplayer(ch_id=None)
@@ -125,10 +130,10 @@ elif mode==1:  #search
 elif mode==2:  #play stream
   if xbmc.Player().isPlaying():
     xbmc.Player().stop()
-  STREAM(name=urllib.unquote_plus(params["name"]), url=urllib.unquote_plus(params["url"]), ch_id=None)
+  STREAM(name=urllib.parse.unquote_plus(params["name"]), url=urllib.parse.unquote_plus(params["url"]), ch_id=None)
 elif mode==3:  #add to main list
   channels = Channels() 
-  if(channels.add(name=urllib.unquote_plus(params["name"]), url=urllib.unquote_plus(params["url"]))):
+  if(channels.add(name=urllib.parse.unquote_plus(params["name"]), url=urllib.parse.unquote_plus(params["url"]))):
     xbmc.executebuiltin("Notification(%s,%s,%i)" % (addon.getLocalizedString(30405), "", 1))
   pass
 elif (mode==4): #delete stream

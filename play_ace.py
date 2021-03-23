@@ -5,7 +5,6 @@ import re
 import hashlib
 import random
 import json
-import urllib2
 import urllib
 import time
 # import select
@@ -56,7 +55,7 @@ class acestream():
         xbmc.executebuiltin("Notification(%s,%s,%i)" % (addon.getLocalizedString(30057), "", 10000))
         return
             
-      buffer += data
+      buffer += data.decode()
 
       while buffer.find(delim) != -1:
         line, buffer = buffer.split('\n', 1)
@@ -91,8 +90,9 @@ class acestream():
     p = re.compile('\skey=(\w+)\s')
     m = p.search(data)
     REQUEST_KEY=m.group(1)
-
-    signature = hashlib.sha1(REQUEST_KEY + SETTINGS.PRODUCT_KEY).hexdigest()
+    key = REQUEST_KEY + SETTINGS.PRODUCT_KEY
+    key = key.encode()
+    signature = hashlib.sha1(key).hexdigest()
     response_key = SETTINGS.PRODUCT_KEY.split ("-") [0] + "-" + signature
 
     cmd = "READY key="+response_key
@@ -116,7 +116,9 @@ class acestream():
 
   def send(self, cmd):
     try:
-      self.sock.send(cmd + "\r\n")
+      cmd = cmd + "\r\n"
+      cmd = cmd.encode()  
+      self.sock.send(cmd)
     except Exception as inst:
       addon_log(inst)
 
@@ -142,11 +144,12 @@ class acestream():
           xbmc.executebuiltin("Notification(%s,%s,%i)" % (response.get('message'), "", 10000))
           return False
 
-        infohash = response.get('infohash')
+        # infohash = response.get('infohash')
         #self.sock.send('GETADURL width = 1328 height = 474 infohash = ' + infohash + ' action = load'+"\r\n")
         #self.sock.send('GETADURL width = 1328 height = 474 infohash = ' + infohash + ' action = pause'+"\r\n")
 
-        self.filename = urllib.unquote(response.get('files')[0][0].encode('ascii')).decode('utf-8')
+        # self.filename = urllib.parse.unquote(response.get('files')[0][0].encode('ascii')).decode('utf-8')
+        self.filename = urllib.parse.unquote(response.get('files')[0][0])
         addon_log(self.filename)
         self.ch_start()
 

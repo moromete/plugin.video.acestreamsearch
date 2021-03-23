@@ -6,8 +6,8 @@ import os
 
 from settings import SETTINGS
 from common import addon, addon_log
-from channel import Channel
-from scrapper import Scrapper
+from resources.acestreamsearch.channel import Channel
+from resources.acestreamsearch.scrapper import Scrapper
 
 class Channels():
   # def __init__( self , **kwargs):
@@ -50,7 +50,7 @@ class Channels():
     if (kb.isConfirmed()):
       name = kb.getText()
       name = name.title()
-      name = name.decode('utf8')
+      name = name
       if name == '' : sys.exit(0)
       else:
         scrapper = Scrapper()
@@ -126,7 +126,7 @@ class Channels():
     i=1
     for ch in arrChannels:
       self.updateStream(id = ch.id)
-      percent = i * 100 / len(arrChannels)
+      percent = round(i * 100 / len(arrChannels))
       pDialog.update(percent, ch.name)
       i = i + 1
 
