@@ -1,3 +1,6 @@
+v 0.1.0
+  1. migrate to python 3 for kodi 19
+
 v 0.0.3
   1. skip ad links from response
 

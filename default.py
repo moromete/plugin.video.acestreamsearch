@@ -15,6 +15,9 @@ addon_id = 'plugin.video.acestreamsearch'
 settings = xbmcaddon.Addon(id=addon_id)
 fileslist = xbmc.translatePath(settings.getAddonInfo('profile'))
 
+MODE_SEARCH = 1
+MODE_MANUAL_ADD = 7
+
 def get_params():
   param=[]
 
@@ -68,9 +71,17 @@ def CHANNEL_LIST():
     liz.setArt({'icon': "DefaultFolder.png"})
     liz.setInfo( type="Video", infoLabels={ "Title": None } )
     liz.setProperty('IsPlayable', 'false')
-    url = sys.argv[0] + "?mode=1"
+    url = sys.argv[0] + "?mode=" + str(MODE_SEARCH)
     xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=url, listitem=liz, isFolder=True)
 
+  # Manual add channel
+  liz=xbmcgui.ListItem('[B][COLOR green]'+addon.getLocalizedString(30413)+'[/COLOR][/B]')
+  liz.setArt({'icon': "DefaultFolder.png"})
+  liz.setInfo( type="Video", infoLabels={ "Title": None } )
+  liz.setProperty('IsPlayable', 'false')
+  url = sys.argv[0] + "?mode=" + str(MODE_MANUAL_ADD)
+  xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=url, listitem=liz, isFolder=False)
+  
   channels = Channels()
   arrChannels = channels.loadChannels()
   for ch in arrChannels:
@@ -96,7 +107,7 @@ def STREAM(name, url, ch_id):
   if(SETTINGS.ACE_ENGINE_TYPE == 1): #use plexus
     try:
       addon_log('plexus')
-      xbmc.executebuiltin('XBMC.RunPlugin(plugin://program.plexus/?mode=1&url='+url+'&name='+name+'&iconimage='+iconimage+')')
+      xbmc.executebuiltin('RunPlugin(plugin://program.plexus/?mode=1&url='+url+'&name='+name+'&iconimage='+iconimage+')')
     except Exception as inst:
       addon_log(inst)
       xbmc.executebuiltin("Notification(%s,%s,%i)" % (addon.getLocalizedString(30303), "", 10000))
@@ -122,7 +133,7 @@ if (mode==None):  #list channels
   channels = Channels()
   channels.migrateDb()
   CHANNEL_LIST()
-elif mode==1:  #search
+elif mode == MODE_SEARCH:  #search
   channels = Channels() 
   arrChannels = channels.search()
   LIST_SEARCH(arrChannels = arrChannels)
@@ -138,7 +149,8 @@ elif mode==3:  #add to main list
   pass
 elif (mode==4): #delete stream
   channels = Channels() 
-  channels.deleteStream(params["id"])
+  if(channels.deleteStream(params["id"])):
+    xbmc.executebuiltin("Container.Refresh")
 elif (mode==5): #update stream
   channels = Channels() 
   if(channels.updateStream(params["id"])):
@@ -149,6 +161,11 @@ elif (mode==6): #update all streams
   if(channels.updateAllStreams()):
     xbmc.executebuiltin("Notification(%s,%s,%i)" % (addon.getLocalizedString(30409), "", 1))
   xbmc.executebuiltin("Container.Refresh")
+elif(mode == MODE_MANUAL_ADD):
+  channels = Channels() 
+  if(channels.manualAdd()):
+    xbmc.executebuiltin("Notification(%s,%s,%i)" % (addon.getLocalizedString(30405), "", 1))
+    xbmc.executebuiltin("Container.Refresh")
   
 addon_log('------------- END ---------------')
 xbmcplugin.endOfDirectory(int(sys.argv[1]))

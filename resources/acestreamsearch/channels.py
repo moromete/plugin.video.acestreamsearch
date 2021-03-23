@@ -57,6 +57,7 @@ class Channels():
         return scrapper.execute(name=name)
   
   def add(self, name, url):
+    url = url.lower()
     ch = Channel(name = name,
                  address = url)
     if(ch.checkAddrExist()):
@@ -75,7 +76,7 @@ class Channels():
       ch = Channel()
       ch.findOne(chId)
       ch.delete()
-      xbmc.executebuiltin("Container.Refresh")
+      return True
 
   def loadChannels(self):
     db_connection=sqlite3.connect(SETTINGS.CHANNELS_DB)
@@ -129,5 +130,23 @@ class Channels():
       percent = round(i * 100 / len(arrChannels))
       pDialog.update(percent, ch.name)
       i = i + 1
+  
+  def manualAdd(self):
+    kb = xbmc.Keyboard('', addon.getLocalizedString(30403))
+    #url
+    kb.doModal()
+    if (kb.isConfirmed()):
+      name = kb.getText()
+      name = name.title()
+      if name == '' : sys.exit(0)
+      else:
+        kb = xbmc.Keyboard('', addon.getLocalizedString(30404))
+        kb.doModal()
+        if (kb.isConfirmed()):
+          address = kb.getText()
+          address = address.title()
+          if address == '' : sys.exit(0)
+          else:
+            return self.add(name, address)
 
     
