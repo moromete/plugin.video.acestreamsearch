@@ -1,11 +1,11 @@
-import xbmc
+import xbmcvfs
 import os
 from common import addon
 
 class SETTINGS(object):
 
   ADDON_PATH = addon.getAddonInfo('path')
-  PROFILE = xbmc.translatePath(addon.getAddonInfo('profile'))
+  PROFILE = xbmcvfs.translatePath(addon.getAddonInfo('profile'))
    
   CHANNELS_DB = os.path.join(PROFILE,'channels.sqlite')
   

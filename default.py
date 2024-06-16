@@ -13,7 +13,6 @@ from resources.acestreamsearch.channel import Channel
 
 addon_id = 'plugin.video.acestreamsearch'
 settings = xbmcaddon.Addon(id=addon_id)
-fileslist = xbmc.translatePath(settings.getAddonInfo('profile'))
 
 MODE_SEARCH = 1
 MODE_MANUAL_ADD = 7
