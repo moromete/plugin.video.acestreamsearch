@@ -1,0 +1,8 @@
+services:
+  acestream:
+    image: vstavrinov/acestream-engine
+    container_name: acestream-engine
+    ports:
+      - "6878:6878"
+      - "62062:62062"
+    restart: unless-stopped
