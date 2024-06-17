@@ -11,6 +11,8 @@ from play_ace import acestream
 from resources.acestreamsearch.channels import Channels
 from resources.acestreamsearch.channel import Channel
 
+from AcestreamHttpApi import AcestreamHttpApi
+
 addon_id = 'plugin.video.acestreamsearch'
 settings = xbmcaddon.Addon(id=addon_id)
 
@@ -112,8 +114,13 @@ def STREAM(name, url, ch_id):
       xbmc.executebuiltin("Notification(%s,%s,%i)" % (addon.getLocalizedString(30303), "", 10000))
   elif(SETTINGS.ACE_ENGINE_TYPE == 0): #use external
     #play with acestream engine started on another machine or on the localhost
-    ace = acestream(player=player, url=url, listitem=listitem)
-    ace.engine_connect()
+    # ace = acestream(player=player, url=url, listitem=listitem)
+    # ace.engine_connect()
+
+    ace = AcestreamHttpApi(url=url, aceHost=SETTINGS.ACE_HOST, acePort=SETTINGS.ACE_PORT)
+    ace.getPlayInfo()
+    player.callback = ace.stop
+    player.play(ace.playback_url, listitem)
 
 #######################################################################################################################
 #######################################################################################################################
