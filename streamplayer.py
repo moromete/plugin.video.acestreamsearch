@@ -13,7 +13,6 @@ class streamplayer(xbmc.Player):
   def __init__( self , *args, **kwargs):
     self.callback = None
 
-    self.stream_online = None
     self.player_status = None
     # addon_log('INIT PLAYER')
     self.url = None
@@ -35,9 +34,6 @@ class streamplayer(xbmc.Player):
       if(self.callback != None):
         self.callback()
     except: pass
-
-    if(self.stream_online != True) :
-      self.isOffline()
 
   def onPlayBackStopped(self):
     addon_log('----------------------->STOP PLAY')
