@@ -1,3 +1,6 @@
+v 0.3.0
+  1. scrape from https://search-ace.stream/ (acestreamsearch.net is no longer used)
+
 v 0.2.1
   1. fix stream player on playback end
   

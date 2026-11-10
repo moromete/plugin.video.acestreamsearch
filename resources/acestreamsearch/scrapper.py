@@ -1,42 +1,36 @@
+import json
 import urllib.parse
 import urllib.request
-from bs4 import BeautifulSoup
 
 class Scrapper():
-  url = 'https://acestreamsearch.net/en/'
+  url = 'https://search-ace.stream/search'
   headers = {
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept': 'application/json',
     'Accept-Encoding': 'identity',
-    'Accept-Language': 'en-US,en;q=0.5', 
+    'Accept-Language': 'en-US,en;q=0.5',
     'Connection': 'keep-alive',
-    'Upgrade-Insecure-Requests': '1',
     'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0'
   }
 
   def execute(self, name):
-    url = self.url + "?q=" + urllib.parse.quote_plus(name)
+    url = self.url + "?query=" + urllib.parse.quote_plus(name)
     self.opener = urllib.request.build_opener()
     request = urllib.request.Request(url, None, self.headers)
-    response = self.opener.open(request)
-    html = response.read()
-    #print(html)
-    
-    soup = BeautifulSoup(html, "html.parser")
-    items = soup.find_all('li', class_="list-group-item")
-    
+    response = self.opener.open(request, timeout=30)
+    results = json.loads(response.read().decode('utf-8'))
+
     channels = []
-    for item in items:
-      listItem = item.contents[0].encode('utf-8')  
-      #print(listItem)
-      soup = BeautifulSoup(listItem, "html.parser")
-      #url
-      chLink = soup.find('a', href=True)
-      chUrl = chLink['href']
-      #name
-      chName = chLink.contents[0].string
-      #print(chName)
-      if(chUrl and chName):
-        channels.append({'name': chName,
-                         'url': chUrl})
-      
+    seen = set()
+    for item in results:
+      chName = item.get('name')
+      contentId = item.get('content_id')
+      if not (chName and contentId):
+        continue
+      key = (chName, contentId)
+      if key in seen:
+        continue
+      seen.add(key)
+      channels.append({'name': chName,
+                       'url': 'acestream://' + contentId})
+
     return channels
